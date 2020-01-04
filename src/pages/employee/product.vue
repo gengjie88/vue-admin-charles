@@ -1,124 +1,171 @@
 <template>
     <div>
-        栏目管理<br>
-        <el-button size="small" type="primary" @click="toAddHanler"> 添加</el-button>
-    <el-button size="small" type="danger"> 删除</el-button>
-<el-table :data="product">
-    <el-table-column label="编号" prop="id"></el-table-column>
-    <el-table-column label="栏目名称" prop="name"></el-table-column>
-    <el-table-column label="序号" prop="num"></el-table-column>
-    <el-table-column label="父栏目" prop="partentId"></el-table-column>
-    <el-table-column label="操作">
-        <template v-slot="slot">
-            
-            <a href="" @click.prevent="toUpdateHandler" class = "el-icon-edit"></a>
-            <a href="" @click.prevent="toDeleteHandler(slot.row.id)" class="el-icon-delete"></a>
-            <a href="" @click.prevent="toDetailsHandler" class="el-icon-more"></a>
-        </template>
-    </el-table-column>
-</el-table>
+        <el-button size="small" type="success" @click="toAddHandler">添加</el-button>
+        <el-button size="small" type="danger" >批量删除</el-button>
+        <!--表格-->
+        <el-table :data="products"> 
+            <el-table-column prop="id" label="编号"></el-table-column>
+            <el-table-column prop="name" label="产品名称"></el-table-column>
+            <el-table-column prop="price" label="价格"></el-table-column>
+            <el-table-column prop="description" label="描述"></el-table-column>
+            <el-table-column prop="categoryId" label="所属栏目"></el-table-column>
+            <el-table-column label="操作">
+                <template v-slot="slot">
+                    <!--阻止默认跳转-->
+                    <a href="" @click.prevent="toUpdataHandler(slot.row)" class="el-icon-edit">修改</a>
+                    <a href="" @click.prevent="toDeleteHandler(slot.row.id)" class="el-icon-delete">删除</a>
+                    <a href="">详情</a>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!--/表格-->
+        <!--分页-->
         <el-pagination
             layout="prev, pager, next"
             :total="50">
         </el-pagination>
-        <el-dialog :title="title" :visible.sync="visiable" width="60%">
-             ---{{form}}
-            <el-form :model="form">
-                <el-form-item label="栏目名称">
+        <!--/分页-->
+        <!--模态框-->
+        <el-dialog
+            title="录入产品信息"
+            :visible.sync="visible"
+            width="60%">
+            {{form}}
+            <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="产品名称">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="序号">
-                    <el-input v-model="form.num"></el-input>
+                <el-form-item label="产品价格">
+                    <el-input v-model="form.price"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="描述">
-                    <el-input v-model="form.description"></el-input>
-                </el-form-item> -->
-                <!-- <el-form-item label="所属产品">
-                    <el-input v-model="form.categoryId"></el-input>
-                </el-form-item> -->
-
+                 <el-form-item label="产品描述">
+                    <el-input type="autosize" v-model="form.description"></el-input>
+                </el-form-item>
+                <el-form-item label="所属栏目">
+                    <el-select v-model="form.categoryId" placeholder="请选择">
+                        <el-option
+                        v-for="item in options"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-upload
+                    class="upload-demo"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :on-preview="handlePreview"
+                    :on-remove="handleRemove"
+                    :file-list="fileList"
+                    list-type="picture">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
             </el-form>
-             <span slot="footer" class="dialog-footer">
-                <el-button size="small" @click="closeModelHandler">取 消</el-button>
-                <el-button size="small" type="primary" @click="submitHandler">确 定</el-button>
+            <span slot="footer" class="dialog-footer">
+            <el-button @click="closeModelHandler" size="small" >取消</el-button>
+            <el-button type="primary" @click="submitHandler" size="small" >提交</el-button>
             </span>
         </el-dialog>
+        <!--/模态框-->
     </div>
 </template>
+
 <script>
-import querystring from 'querystring'
-import request from'@/utils/request'
+import request from '@/utils/request'
+import querystring, { stringify } from 'querystring'
 export default {
-    data(){
-        return{
-            form:{type:"product"},
-            title:"录入栏目信息",
-            visiable:false,
-            product:[]
-        }
-        
-    },
     methods:{
-        toDeleteHandler(id){
+        loadData(){
+            let url = "http://localhost:6677/product/findAll"
+            request.get(url).then((response)=>{
+            // 将查询结果设置到customers中，this指向外部函数的this
+                this.products = response.data;
+            })
+        },
+        loadCategory(){
+            let url = "http://localhost:6677/category/findAll"
+            request.get(url).then((response)=>{
+            // 将查询结果设置到customers中，this指向外部函数的this
+                this.options = response.data;
+            })
+        },
+        toAddHandler(){
+            this.visible=true;
+        },
+        closeModelHandler(){
+            this.visible=false;
+        },
+        toUpdataHandler(row){
+            this.form = row;
+            this.visible=true;
+        },
+        toDeleteHandler(id) {
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-        })
-        },
-        toUpdateHandler(){
-           this.title = "修改栏目信息";
-           this.visiable = true;
-        },
-        toDetailsHandler(){
-           this.title = "详细栏目信息";
-           this.visiable = true;
-        },
-        toAddHanler(row){
-                this.title = "录入栏目信息",
-                this.visiable = true;
-        },
-        closeModelHandler(){
-                this.visiable = false;
+            }).then(() => {
+                //alert(id);
+                let url="http://localhost:6677/product/deleteById?id="+id;
+                request.get(url).then((response)=>{
+                    this.loadData();
+                    this.$message({
+                        type: 'success',
+                        message: response.message
+                    });  
+                })        
+            });
         },
         submitHandler(){
-                 let url = "http://localhost:6677/category/saveOrUpdate";
+            //this.form 对象 ---字符串--> 后台 {type:'customer',age:12}
+            // json字符串 '{"type":"customer","age":12}'
+            // request.post(url,this.form)
+            // 查询字符串 type=customer&age=12
+            // 通过request与后台进行交互，并且要携带参数
+            let url = "http://localhost:6677/product/saveOrUpdate";
             request({
                 url,
                 method:"POST",
                 headers:{
-                         "Content-Type":"application/x-www-form-urlencoded"
+                "Content-Type":"application/x-www-form-urlencoded"
                 },
                 data:querystring.stringify(this.form)
             }).then((response)=>{
+                // 模态框关闭
                 this.closeModelHandler();
+                // 刷新
                 this.loadData();
+                // 提示消息
                 this.$message({
-                    type:"succsee",
+                    type:"success",
                     message:response.message
                 })
             })
         },
-        loadData(){
-        let url = "http://localhost:6677//category/findAll"
-         request.get(url).then((response)=>{
-        // 将查询结果设置到customers中，this指向外部函数的this
-        this.product = response.data;
-      })
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
         },
-
+        handlePreview(file) {
+            console.log(file);
+        }
+    },
+    data(){
+        return {
+            visible:false,
+            products:[],
+            fileList: [],
+            form:{},
+            options:[]
+        }
     },
     created(){
-        this.loadData()
-    },
-    
+        this.loadData();
+        this.loadCategory();
+    }
 }
 </script>
+
 <style scoped>
 
 </style>

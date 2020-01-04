@@ -1,19 +1,18 @@
 <template>
     <div>
-        产品管理<br>
+        栏目管理<br>
         <el-button size="small" type="primary" @click="toAddHanler"> 添加</el-button>
     <el-button size="small" type="danger"> 删除</el-button>
 <el-table :data="column">
     <el-table-column label="编号" prop="id"></el-table-column>
-    <el-table-column label="产品名称" prop="name"></el-table-column>
-    <el-table-column label="价格" prop="price"></el-table-column>
-    <el-table-column label="描述" prop="description"></el-table-column>
-    <el-table-column label="所属产品" prop="categoryId"></el-table-column>
+    <el-table-column label="栏目名称" prop="name"></el-table-column>
+    <el-table-column label="序号" prop="num"></el-table-column>
+    <el-table-column label="父栏目" prop="parentId"></el-table-column>
     <el-table-column label="操作">
         <template v-slot="slot">  
             <a href="" @click.prevent="toUpdateHandler" class = "el-icon-edit"></a>
             <a href="" @click.prevent="toDeleteHandler(slot.row.id)" class="el-icon-delete"></a>
-            <a href="" @click.prevent="toDetailsHandler" class="el-icon-more"></a>
+            <!-- <a href="" @click.prevent="toDetailsHandler" class="el-icon-more"></a> -->
         </template>
     </el-table-column>
 </el-table>
@@ -24,34 +23,12 @@
         <el-dialog :title="title" :visible.sync="visiable" width="60%">
              ---{{form}}
             <el-form :model="form">
-                <el-form-item label="产品名称">
+                <el-form-item label="栏目名称">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                {{}}
-            <el-form-item label="选择所属类型">
-                 <el-dropdown split-button type="primary"  @click="dropmenuloadData" >
-                请选择
-            <el-dropdown-menu  slot="dropdown">
-            <el-dropdown-item prop="name"></el-dropdown-item>
-            <el-dropdown-item prop="name"></el-dropdown-item>
-            <el-dropdown-item prop="name"></el-dropdown-item>
-            <el-dropdown-item prop="name"></el-dropdown-item>
-            <el-dropdown-item prop="name"></el-dropdown-item>
-            <el-dropdown-item prop="name"></el-dropdown-item>
-        </el-dropdown-menu>
-    </el-dropdown>
-            </el-form-item>
-             
-                <el-form-item label="价格">
-                    <el-input v-model="form.price"></el-input>
-                </el-form-item>
-                <el-form-item label="描述">
-                    <el-input v-model="form.description"></el-input>
-                </el-form-item>
-                <!-- <el-form-item label="所属产品">
-                    <el-input v-model="form.categoryId"></el-input>
-                </el-form-item> -->
-
+                <el-form-item label="序号">
+                    <el-input v-model="form.num"></el-input>
+                    </el-form-item>
             </el-form>
              <span slot="footer" class="dialog-footer">
                 <el-button size="small" @click="closeModelHandler">取 消</el-button>
@@ -63,16 +40,18 @@
 <script>
 import querystring from 'querystring'
 import request from'@/utils/request'
-import { type } from 'os'
+
 export default {
     data(){
         return{
-            form:{type:"column"},
             
-            title:"录入产品信息",
+            form:{type:""},
+            
+            title:"录入栏目信息",
             visiable:false,
          //   dropmenu:[],
-            column:[]
+            column:[],
+               // options:[],
             
         }
         
@@ -91,29 +70,33 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
         }).then(() => {
+            let url="http://localhost:6677/category/deleteById?id="+id;
+                request.get(url).then((response)=>{
+                    this.loadData();
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: response.message
           });
+        })
         })
         },
         toUpdateHandler(){
-           this.title = "修改产品信息";
+           this.title = "修改栏目信息";
            this.visiable = true;
         },
-        toDetailsHandler(){
-           this.title = "产品详情";
-           this.visiable = true;
-        },
+        // toDetailsHandler(){
+        //    this.title = "栏目详情";
+        //    this.visiable = true;
+        // },
         toAddHanler(row){
-                this.title = "录入产品信息",
+                this.title = "录入栏目信息",
                 this.visiable = true;
         },
         closeModelHandler(){
                 this.visiable = false;
         },
         submitHandler(){
-                 let url = "http://localhost:6677//product/saveOrUpdate";
+                 let url = "http://localhost:6677/category/saveOrUpdate";
             request({
                 url,
                 method:"POST",
@@ -131,12 +114,12 @@ export default {
             })
         },
         loadData(){
-        let url = "http://localhost:6677/product/findAll"
+        let url = "http://localhost:6677/category/findAll"
          request.get(url).then((response)=>{
         // 将查询结果设置到customers中，this指向外部函数的this
         this.column = response.data;
       })
-        },
+        } 
 
     },
     created(){

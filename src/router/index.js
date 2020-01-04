@@ -68,6 +68,7 @@ export const constantRoutes = [
       }
     ]
   },
+  
   {
     path: '/customer',
     component: Layout,
@@ -88,7 +89,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'columList',
         component: () => import('@/pages/employee/column'),
-        meta: { title: '产品管理', icon: 'user' }
+        meta: { title: '栏目管理', icon: 'user' }
       }
     ]
   },
@@ -100,7 +101,19 @@ export const constantRoutes = [
         path: 'index',
         name: 'productList',
         component: () => import('@/pages/employee/product'),
-        meta: { title: '栏目管理', icon: 'user' }
+        meta: { title: '管理', icon: 'user' }
+      }
+    ]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'orderList',
+        component: () => import('@/pages/employee/order'),
+        meta: { title: '订单管理', icon: 'user' }
       }
     ]
   },
