@@ -1,7 +1,8 @@
 <template>
     <div>
+        顾客管理<br>
         <!--按钮-->
-        <el-button size="small" type="success" @click="toAddHandler">添加</el-button>
+        <el-button size="small" type="primary" @click="toAddHandler">添加</el-button>
         <el-button size="small" type="danger">删除</el-button>
         <!--/按钮-->
         <!--表格-->
@@ -12,8 +13,8 @@
             <el-table-column label="操作">
                 <template v-slot="slot">
                     <!--阻止默认跳转-->
-                    <a href="" @click.prevent="toUpdataHandler(slot.row)">修改</a>
-                    <a href="" @click.prevent="toDeleteHandler(slot.row.id)">删除</a>
+                    <a href="" @click.prevent="toUpdataHandler(slot.row)" class = "el-icon-edit"></a>
+                    <a href="" @click.prevent="toDeleteHandler(slot.row.id)"  class="el-icon-delete"></a>
                 </template>
             </el-table-column>
         </el-table>

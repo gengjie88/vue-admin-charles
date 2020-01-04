@@ -10,9 +10,10 @@
     <el-table-column label="父栏目" prop="partentId"></el-table-column>
     <el-table-column label="操作">
         <template v-slot="slot">
-            <a href="" @click.prevent="toDeleteHandler(slot.row.id)">删除</a>
-            <a href="" @click.prevent="toUpdateHandler">修改</a>
-            <a href="" @click.prevent="toDetailsHandler">详情</a>
+            
+            <a href="" @click.prevent="toUpdateHandler" class = "el-icon-edit"></a>
+            <a href="" @click.prevent="toDeleteHandler(slot.row.id)" class="el-icon-delete"></a>
+            <a href="" @click.prevent="toDetailsHandler" class="el-icon-more"></a>
         </template>
     </el-table-column>
 </el-table>

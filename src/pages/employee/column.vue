@@ -10,10 +10,10 @@
     <el-table-column label="描述" prop="description"></el-table-column>
     <el-table-column label="所属产品" prop="categoryId"></el-table-column>
     <el-table-column label="操作">
-        <template v-slot="slot">
-            <a href="" @click.prevent="toDeleteHandler(slot.row.id)">删除</a>
-            <a href="" @click.prevent="toUpdateHandler">修改</a>
-            <a href="" @click.prevent="toDetailsHandler">详情</a>
+        <template v-slot="slot">  
+            <a href="" @click.prevent="toUpdateHandler" class = "el-icon-edit"></a>
+            <a href="" @click.prevent="toDeleteHandler(slot.row.id)" class="el-icon-delete"></a>
+            <a href="" @click.prevent="toDetailsHandler" class="el-icon-more"></a>
         </template>
     </el-table-column>
 </el-table>
@@ -27,16 +27,17 @@
                 <el-form-item label="产品名称">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
+                {{}}
             <el-form-item label="选择所属类型">
-                 <el-dropdown split-button type="primary" @click="handleClick" >
+                 <el-dropdown split-button type="primary"  @click="dropmenuloadData" >
                 请选择
-            <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>喜羊羊</el-dropdown-item>
-            <el-dropdown-item>美羊羊</el-dropdown-item>
-            <el-dropdown-item>懒羊羊</el-dropdown-item>
-            <el-dropdown-item>沸羊羊</el-dropdown-item>
-            <el-dropdown-item>暖羊羊</el-dropdown-item>
-            <el-dropdown-item>慢羊羊</el-dropdown-item>
+            <el-dropdown-menu  slot="dropdown">
+            <el-dropdown-item prop="name"></el-dropdown-item>
+            <el-dropdown-item prop="name"></el-dropdown-item>
+            <el-dropdown-item prop="name"></el-dropdown-item>
+            <el-dropdown-item prop="name"></el-dropdown-item>
+            <el-dropdown-item prop="name"></el-dropdown-item>
+            <el-dropdown-item prop="name"></el-dropdown-item>
         </el-dropdown-menu>
     </el-dropdown>
             </el-form-item>
@@ -62,17 +63,28 @@
 <script>
 import querystring from 'querystring'
 import request from'@/utils/request'
+import { type } from 'os'
 export default {
     data(){
         return{
             form:{type:"column"},
+            
             title:"录入产品信息",
             visiable:false,
+         //   dropmenu:[],
             column:[]
+            
         }
         
     },
     methods:{
+        // dropmenuloadData(){
+        // let url = "http://localhost:6677//category/findAll"
+        //  request.get(url).then((response)=>{
+        // // 将查询结果设置到customers中，this指向外部函数的this
+        // this.dropmenu = response.data; 
+        // }) 
+        // },
         toDeleteHandler(id){
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -129,6 +141,7 @@ export default {
     },
     created(){
         this.loadData()
+        
     },
     
 }

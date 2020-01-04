@@ -12,8 +12,9 @@
         <el-table-column width = "200" label="银行卡号" prop="bankCard"></el-table-column>
         <el-table-column label="操作">
             <template v-slot="slot">
-            <a href="" @click.prevent="toDeleteHandler(slot.row.id)">删除</a>
-            <a href="" @click.prevent="toUpdateHandler(slot.row)">修改</a>
+            
+            <a href="" @click.prevent="toUpdateHandler(slot.row)" class = "el-icon-edit"></a>
+            <a href="" @click.prevent="toDeleteHandler(slot.row.id)" class="el-icon-delete"></a>
         </template>
         </el-table-column>
         </el-table>
@@ -118,7 +119,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-            let url = "http://127.0.0.1:6677/waiter/deleteById?+id="+id;
+            let url = "http://127.0.0.1:6677/waiter/deleteById?id="+id;
                 request.get(url).then((response)=>{
                     //刷新数据,提示结果
                     this.loadData();
