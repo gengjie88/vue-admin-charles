@@ -101,7 +101,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'productList',
         component: () => import('@/pages/employee/product'),
-        meta: { title: '管理', icon: 'user' }
+        meta: { title: '产品管理', icon: 'user' }
       }
     ]
   },
